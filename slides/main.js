@@ -1,24 +1,25 @@
 const scroll = {
-    currentSection: 0,
-    options: {
-        behavior: 'smooth',
-        block: 'end'
-    },
     lock: false,
+    total: 5,
+    current: 0,
+    options: { behavior: 'smooth' },
     sections: document.querySelectorAll('section'),
-    setLock: () => {
-        scroll.lock = true;
-        setTimeout(() => scroll.lock = false, 400);
+    to: (index) => {
+        if(index!==scroll.current && 0<=index && index<scroll.total) {
+            scroll.lock = true;
+            scroll.sections[index].scrollIntoView(scroll.options);
+            scroll.current = index;
+            history.replaceState({}, '', '#'+scroll.sections[index].id);
+            // console.log('#'+scroll.sections[index].id);
+            setTimeout(() => scroll.lock = false, 400);
+        }
     },
     handler: (e) => {
         if(scroll.lock) return;
-
-        if(e.key === 'ArrowDown'){
-            scroll.setLock();
-            scroll.sections[scroll.currentSection<4?++scroll.currentSection:scroll.currentSection].scrollIntoView(scroll.options);
+        if(e.key === 'ArrowDown') {
+            scroll.to(scroll.current+1);
         } else if(e.key === 'ArrowUp') {
-            scroll.setLock();
-            scroll.sections[scroll.currentSection>0?--scroll.currentSection:scroll.currentSection].scrollIntoView(scroll.options);
+            scroll.to(scroll.current-1);
         }
     }
 }
